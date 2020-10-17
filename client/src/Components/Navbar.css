@@ -1,0 +1,20 @@
+.navbar {
+  background: transparent;
+  position: absolute !important;
+  width: 100%;
+  z-index: 1000;
+}
+.navbar-nav .nav-link,
+.navbar-brand,
+.nav-link {
+  color: white;
+}
+
+.navbar-brand:hover,
+.nav-link:hover {
+  color: rgb(155, 155, 155);
+}
+
+.navbar-toggler {
+  border: 1px solid white !important;
+}

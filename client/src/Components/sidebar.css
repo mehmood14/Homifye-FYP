@@ -1,0 +1,35 @@
+.nav {
+  margin-top: 20px;
+  display: block;
+  padding-left: 0;
+}
+
+.nav a {
+  top: 20px;
+  color: rgb(116, 116, 116);
+  line-height: 24px;
+}
+
+.nav li a {
+  top: 0;
+  margin: 0 15px;
+  padding: 18px 8px !important;
+}
+
+.nav i {
+  float: left;
+}
+
+.nav p {
+  margin: 6px;
+  padding-left: 55px;
+}
+
+.nav[data-color="green"] li.active > a {
+  background-color: #2ca045;
+  border-radius: 3px;
+  padding: 6px 7px 1px !important;
+  color: black;
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.14),
+    0 7px 10px -5px rgba(156, 39, 176, 0.4);
+}

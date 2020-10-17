@@ -1,0 +1,9 @@
+.approvals-wrapper {
+  margin-top: 65px;
+  padding: 34px 34px;
+  border: 2px solid red;
+  margin-left: 73px;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+}

@@ -1,0 +1,44 @@
+.makeStyles-drawerOpen-7 {
+  background-color: rgb(245, 245, 245) !important;
+}
+
+.makeStyles-drawerClose-8 {
+  background-color: rgb(245, 245, 245) !important;
+}
+
+.MuiIconButton-label {
+  color: black !important;
+}
+
+.MuiPaper-elevation4 {
+  box-shadow: 5px 2px 4px -1px rgba(0, 0, 0, 0.2),
+    5px 4px 5px 0px rgba(0, 0, 0, 0.14), 5px 1px 10px 0px rgba(0, 0, 0, 0.12) !important;
+}
+
+.MuiAppBar-colorPrimary {
+  background-color: rgb(243, 243, 243) !important;
+}
+
+.MuiTypography-h6 {
+  font-size: 2.25rem !important;
+}
+
+body {
+  margin: 0 !important;
+  font-size: 1.3rem !important;
+}
+
+.MuiDrawer-paper {
+  overflow: hidden !important;
+  box-shadow: 0 16px 38px -12px rgba(0, 0, 0, 0.56),
+    0 4px 25px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2) !important;
+}
+
+.makeStyles-content-10 {
+  margin-top: 70px !important;
+  padding: 30px 15px !important;
+  min-height: calc(100vh - 123px) !important;
+  margin-top: 64px !important;
+  height: 100vh !important;
+  background-color: rgb(243, 243, 243) !important;
+}

@@ -1,0 +1,59 @@
+.backgroundlogin {
+  background-image: url(https://source.unsplash.com/random/800x600);
+  background-size: cover;
+  height: 100vh;
+}
+
+.pagelogin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: linear-gradient(
+    rgb(65, 65, 65),
+    rgb(0, 0, 0, 0.4),
+    rgb(65, 65, 65)
+  );
+  background-image: linear-gradient(
+    to top,
+    rgb(65, 65, 65),
+    rgb(0, 0, 0, 0.4),
+    rgb(65, 65, 65)
+  );
+  height: 100vh;
+}
+.formdivlogin {
+  border: 1px solid gray;
+  padding: 40px;
+  background-color: rgb(0, 0, 0, 0.4);
+  border-radius: 8px;
+}
+
+.formlogin {
+  background-color: transparent;
+  color: white;
+  width: 260px;
+}
+
+::placeholder {
+  color: rgb(0, 0, 0, 0.6) !important;
+}
+
+.btnlogin.btn {
+  color: white !important;
+  background-color: rgb(0, 0, 0, 0.3) !important;
+}
+
+.btnlogin.btn:hover {
+  color: rgb(155, 155, 155) !important;
+}
+
+.forgotloginn {
+  color: white;
+  font-size: 0.8rem;
+  text-decoration: none !important;
+  float: right;
+}
+
+.forgotloginn:hover {
+  color: rgb(155, 155, 155) !important;
+}

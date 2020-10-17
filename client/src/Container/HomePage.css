@@ -1,0 +1,37 @@
+.background {
+  background-image: url(https://source.unsplash.com/random/800x600);
+  background-size: cover;
+  height: 100vh;
+}
+
+.page {
+  display: flex;
+  align-items: center;
+  background-image: linear-gradient(
+    rgb(65, 65, 65),
+    rgb(0, 0, 0, 0.4),
+    rgb(65, 65, 65)
+  );
+  background-image: linear-gradient(
+    to top,
+    rgb(65, 65, 65),
+    rgb(0, 0, 0, 0.4),
+    rgb(65, 65, 65)
+  );
+  height: 100vh;
+}
+
+.card {
+  position: absolute !important;
+  width: 20%;
+  margin-left: 15%;
+  color: white;
+  background-color: rgb(0, 0, 0, 0.4) !important;
+}
+
+.getButton {
+  background-color: rgb(0, 0, 0, 0.3) !important;
+}
+.getButton:hover {
+  color: rgb(155, 155, 155) !important;
+}
