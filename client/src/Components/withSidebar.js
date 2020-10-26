@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { BrowserRouter as Route } from "react-router-dom";
+import { Route } from "react-router-dom";
 import Drawer from "../Container/Drawer";
 class WithSidebar extends Component {
   render() {

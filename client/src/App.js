@@ -2,20 +2,22 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Login from "./Container/Login";
 import SignUp from "./Container/SignUp";
-import found from "./Container/Found";
 import NotFound from "./Container/NotFound";
 import ForgotPass from "./Container/ForgotPass";
-import ForgotVerify from "./Container/ForgotVerify";
 import HomeReg from "./Container/HomeReg";
 import HomePage from "./Container/HomePage";
 import HomeLogin from "./Container/HomeLogin";
-import PassUpdated from "./Container/PassUpdated";
 import Dashboard from "./Components/Dashboard";
 import Profile from "./Components/Profile";
 import WithSidebar from "./Components/withSidebar";
 import Approvals from "./Components/Approvals";
 import UserVerified from "./Container/UserVerified";
 import { EmailCheck } from "./Container/EmailCheck";
+import { ForgotEmailCheck } from "./Container/ForgotEmailCheck";
+import ForgotChangePass from "./Container/ForgotChangePass";
+import ForgotPassChanged from "./Container/ForgotPassChanged";
+
+import "./App.css";
 
 class App extends Component {
   render() {
@@ -37,12 +39,12 @@ class App extends Component {
         <Route path="/login" component={Login} />
         <Route path="/signup" component={SignUp} />
         <Route path="/verify/" component={UserVerified} />
-        <Route path="/found" component={found} />
         <Route path="/notfound" component={NotFound} />
         <Route path="/forgotpass" component={ForgotPass} />
-        <Route path="/forgotverify/" component={ForgotVerify} />
-        <Route path="/passupdated/" component={PassUpdated} />
+        <Route path="/changepass/" component={ForgotChangePass} />
         <Route path="/mailcheck" component={EmailCheck} />
+        <Route path="/forgotmail" component={ForgotEmailCheck} />
+        <Route path="/passchanged" component={ForgotPassChanged} />
       </Router>
     );
   }

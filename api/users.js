@@ -11,12 +11,6 @@ var validation = require("../service/service.js");
 exports.registerHome = (req, res) => {
   const home = new Home();
 
-  const emailValidation = validation.emailValidationService(req.body.email);
-  const homeNameValidation = validation.nameValidationService(req.body.name);
-  const userNameValidation = validation.nameValidationService(
-    req.body.username
-  );
-
   if (
     req.body.name !== null &&
     req.body.name !== undefined &&
@@ -45,22 +39,22 @@ exports.registerHome = (req, res) => {
                 res.send("user registered");
               })
               .catch((err) => {
-                res.status(400).send("err");
+                res.status(400).send();
               });
           } else {
-            console.log("format");
+            res.status(400).send();
           }
         } else {
-          console.log("no email");
+          res.status(400).send();
         }
       } else {
-        console.log("no adress");
+        res.status(400).send();
       }
     } else {
-      console.log("home name format");
+      res.status(400).send();
     }
   } else {
-    console.log("no name");
+    res.status(400).send();
   }
 };
 
@@ -103,40 +97,64 @@ exports.registerUser = (req, res) => {
                   user
                     .save()
                     .then((result) => {
+                      console.log(req.body.homeId);
+                      //adding user id to home array & set user as home admn
                       Home.findOneAndUpdate(
                         { email: req.body.email },
                         { $push: { users: result._id } },
                         (err, next) => {
                           if (err) {
-                            console.log("err:", err);
+                            res.status(400).send();
                           } else {
-                            console.log("next:", next);
+                            //console.log("next:", next);
                             if (next !== null) {
                               User.findOneAndUpdate(
                                 { _id: result._id },
-                                { role: "homeAdmin" },
+                                {
+                                  $set: {
+                                    role: "homeAdmin",
+                                    userHomeId: next._id,
+                                  },
+                                },
                                 { useFindAndModify: false },
                                 () => {}
                               );
+                            } else {
+                              res.status(400).send();
                             }
                           }
                         }
                       );
+
+                      //set role to homeMember
                       Home.findOneAndUpdate(
-                        { _id: result.homeId },
+                        { _id: req.body.homeId },
                         { $push: { users: result._id } },
                         (err, isMatch) => {
                           if (err) {
                             console.log(err);
+                            res.status(400).send();
                           } else {
-                            User.findOneAndUpdate(
-                              { _id: result._id },
-                              { role: "homeMember" },
-                              () => {}
-                            );
+                            console.log(isMatch);
+                            if (isMatch !== null) {
+                              User.findOneAndUpdate(
+                                { _id: result._id },
+                                {
+                                  $set: {
+                                    role: "homeMember",
+                                    userHomeId: isMatch._id,
+                                  },
+                                },
+                                { multi: true },
+                                () => {}
+                              );
+                            } else {
+                              res.status(400).send();
+                            }
                           }
                         }
                       );
+
                       bcrypt.genSalt(10, function (err, salt) {
                         bcrypt.hash(result.password, salt, function (
                           err,
@@ -148,10 +166,9 @@ exports.registerUser = (req, res) => {
                             { useFindAndModify: false },
                             function (err, resultt) {
                               if (err) {
-                                console.log(err);
+                                res.status(400).send();
                               } else {
-                                res.send("User regisyered");
-
+                                res.send(result);
                                 // const data = {
                                 //   from: "Homifye@gmail.com",
                                 //   to: req.body.email,
@@ -178,32 +195,39 @@ exports.registerUser = (req, res) => {
                       });
                     })
                     .catch((err) => {
-                      res.send("err");
-                      console.log(err);
+                      res.status(400).send();
                     });
                 } else {
-                  console.log("phone must be 11");
+                  res.status(400).send();
+                  console.log("phone length");
                 }
               } else {
-                console.log("password must b 8");
+                res.status(400).send();
+                console.log("pass length");
               }
             } else {
-              console.log("no password");
+              res.status(400).send();
+              console.log("incorrect pass");
             }
           } else {
-            console.log("email format");
+            res.status(400).send();
+            console.log("email format ");
           }
         } else {
-          console.log("no email");
+          res.status(400).send();
+          console.log("incorrect email");
         }
       } else {
-        console.log("username name format");
+        res.status(400).send();
+        console.log("usrnae format ");
       }
     } else {
-      console.log("no username");
+      res.status(400).send();
+      console.log("incorrect username");
     }
   } else {
-    console.log("no name");
+    res.status(400).send();
+    console.log("incorrect name");
   }
 };
 
@@ -253,7 +277,7 @@ exports.homeLogin = (req, res) => {
     if (validation.nameValidationService(req.body.name)) {
       Home.findOne({ name: req.body.name }, function (err, result) {
         if (err) {
-          console.log(err);
+          res.status(400).send();
         } else {
           if (result !== null) {
             if (req.body.name == result.name) {
@@ -262,59 +286,78 @@ exports.homeLogin = (req, res) => {
               res.send(result);
             }
           } else {
-            console.log("home not found");
+            res.status(400).send();
           }
         }
       });
     } else {
-      console.log("home name format");
+      res.status(400).send();
     }
   } else {
-    console.log("no home name");
+    res.status(400).send();
   }
 };
 
 exports.userLogin = (req, res) => {
   if (
-    req.body.username !== null &&
-    req.body.username !== undefined &&
-    req.body.username !== ""
+    req.body.email !== null &&
+    req.body.email !== undefined &&
+    req.body.email !== ""
   ) {
-    if (validation.nameValidationService(req.body.username)) {
+    if (validation.emailValidationService(req.body.email)) {
       if (
         req.body.password !== null &&
         req.body.password !== undefined &&
         req.body.password !== ""
       ) {
-        const password = req.body.password;
         if (req.body.password.length >= 8) {
-          User.findOne({ username: req.body.username }, (err, result) => {
+          User.findOne({ email: req.body.email }, (err, result) => {
             if (err) {
               console.log(err);
             } else {
-              if (req.body.username == result.username) {
-                console.log(req.body.password);
-                console.log(result.password);
-                bcrypt.compare(password, result.password, (err, isValid) => {
-                  if (isValid) {
-                    var token = jwt.sign(
-                      { user: result },
-                      process.env.JWT_SECRET,
-                      {
-                        expiresIn: 1000000,
-                      }
-                    );
-                    res.status(200).send({
-                      success: true,
-                      user: result,
-                      token: "JWT " + token,
-                    });
+              if (result !== null) {
+                if (adminApproved == true) {
+                  if (isVerified == true) {
+                    if (req.body.email == result.email) {
+                      console.log(req.body.password);
+                      console.log(result.password);
+                      bcrypt.compare(
+                        req.body.password,
+                        result.password,
+                        (err, isValid) => {
+                          if (isValid) {
+                            var token = jwt.sign(
+                              { user: result },
+                              process.env.JWT_SECRET,
+                              {
+                                expiresIn: 1000000,
+                              }
+                            );
+                            res.status(200).send({
+                              success: true,
+                              user: result,
+                              token: "JWT " + token,
+                            });
+                          } else {
+                            console.log("wrong pass");
+                          }
+                        }
+                      );
+                    } else {
+                      res.status(400).send();
+                      console.log("user name not found");
+                    }
                   } else {
-                    console.log("wrong pass");
+                    console.log("user not verefired");
+                    res.status(400).send();
                   }
-                });
+                } else {
+                  console.log("not approved");
+                  res.status(400).send();
+                }
               } else {
-                console.log("user name not found");
+                console.log("user not found");
+                res.status(400).send();
               }
             }
           });
@@ -325,9 +368,118 @@ exports.userLogin = (req, res) => {
         console.log("no password");
       }
     } else {
-      console.log("username name format");
+      console.log("email name format");
     }
   } else {
-    console.log("no username");
+    console.log("no email");
   }
+};
+
+exports.forgotPass = (req, res) => {
+  User.findOne({ email: req.body.email }, (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      if (result !== null) {
+        console.log(result);
+        // const data = {
+        //   from: "Homifye@gmail.com",
+        //   to: req.body.email,
+        //   subject: "User Verification",
+        //   text: "http://localhost:3001/changepass?id=" + result._id,
+        // };
+        // mg.messages().send(data, function (error, body) {
+        //   if (error) {
+        //     res.status(400).send();
+        //   }
+        // });
+        res.send(result);
+      } else {
+        res.status(400).send();
+      }
+    }
+  });
+};
+
+exports.forgotChangePass = (req, res) => {
+  bcrypt.genSalt(10, function (err, salt) {
+    bcrypt.hash(req.body.newpassword, salt, function (err, hash) {
+      User.findOneAndUpdate(
+        { _id: req.params.id },
+        { password: hash },
+        { useFindAndModify: false },
+        function (err, result) {
+          if (err) {
+            console.log(err);
+          } else {
+            res.send("password changed");
+          }
+        }
+      );
+    });
+  });
+};
+
+exports.approveUsers = (req, res) => {
+  User.findOneAndUpdate(
+    { email: req.params.email },
+    { adminApproved: true },
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+        if (result !== null) {
+          console.log("user approved");
+        } else {
+          console.log("no user");
+        }
+      }
+    }
+  );
+};
+
+exports.pendingUsers = (req, res) => {
+  Home.findOne({ _id: req.params.homeId }, (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      if (result !== null) {
+        User.find({ _id: { $in: result.users } }, (err, next) => {
+          if (err) {
+            console.log(err);
+          } else {
+            if (next !== null) {
+              // console.log("next", next);
+              res.send(next);
+            }
+          }
+        });
+      } else {
+        console.log(err);
+      }
+    }
+  });
+};
+
+exports.declineUsers = (req, res) => {
+  console.log(req.params.homeId);
+  console.log(req.params.userId);
+
+  Home.findOneAndUpdate(
+    { _id: req.params.homeId },
+    { $pull: { users: req.params.userId } },
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+        if (result !== null) {
+          console.log("user removed");
+        } else {
+          console.log("no user");
+        }
+      }
+    }
+  );
 };

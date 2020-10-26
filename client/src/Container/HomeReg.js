@@ -3,12 +3,15 @@ import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import axios from "axios";
 import "./HomeReg.css";
 import { Link } from "react-router-dom";
+import Alert from "@material-ui/lab/Alert";
 
 export default class HomeReg extends Component {
   state = {
     name: "",
     address: "",
     email: "",
+    showAlert: false,
+    alertMessage: "",
   };
 
   fields = (e) => {
@@ -37,6 +40,8 @@ export default class HomeReg extends Component {
           this.state.email !== ""
         ) {
           if (this.validateEmail(this.state.email)) {
+            const { history } = this.props;
+
             axios({
               method: "post",
               url: "http://127.0.0.1:3000/registerHome",
@@ -48,24 +53,40 @@ export default class HomeReg extends Component {
             })
               .then((res) => {
                 console.log("res", res);
-                // if (res.status === 200) {
-                //   window.location.href = "/signup";
-                // }
+                if (res.status === 200) {
+                  history.push("/signup");
+                }
               })
               .catch((err) => {
                 console.log("err::", err);
+                this.setState({
+                  alertMessage: "Already registered",
+                  showAlert: true,
+                });
               });
           } else {
-            alert("email format not correct");
+            this.setState({
+              alertMessage: "Invalid email format",
+              showAlert: true,
+            });
           }
         } else {
-          console.log("email required");
+          this.setState({
+            alertMessage: "Invalid email",
+            showAlert: true,
+          });
         }
       } else {
-        console.log("address required");
+        this.setState({
+          alertMessage: "Invalid address",
+          showAlert: true,
+        });
       }
     } else {
-      console.log("name required");
+      this.setState({
+        alertMessage: "Invalid name",
+        showAlert: true,
+      });
     }
   };
 
@@ -105,6 +126,24 @@ export default class HomeReg extends Component {
                   onChange={this.fields}
                 />
               </FormGroup>
+              {this.state.showAlert === true ? (
+                <Alert
+                  severity="error"
+                  style={{
+                    color: "white",
+                    fontSize: "11px",
+                    height: "26px",
+                    display: "flex",
+                    alignItems: "center",
+                    backgroundColor: "transparent",
+                    padding: "0",
+                    marginTop: "-8px",
+                    marginBottom: "10px",
+                  }}
+                >
+                  {this.state.alertMessage}
+                </Alert>
+              ) : null}
               <Button onClick={this.homeReg} className="btnhomereg">
                 Submit
               </Button>

@@ -23,6 +23,10 @@ const UserSchema = mongoose.Schema({
     type: Number,
     require: true,
   },
+  adminApproved: {
+    type: Boolean,
+    default: false,
+  },
   isVerified: {
     type: Boolean,
     default: false,
@@ -32,6 +36,14 @@ const UserSchema = mongoose.Schema({
   },
   role: {
     type: String,
+  },
+  newpassword: {
+    type: String,
+    require: true,
+  },
+  userHomeId: {
+    type: String,
+    require: true,
   },
 });
 

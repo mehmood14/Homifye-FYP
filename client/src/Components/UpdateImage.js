@@ -3,7 +3,7 @@ import "./Profile.css";
 import axios from "axios";
 import { Input } from "reactstrap";
 
-export default class LeftUpdateImage extends Component {
+export default class UpdateImage extends Component {
   constructor(props) {
     super(props);
     this.state = {

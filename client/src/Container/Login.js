@@ -7,25 +7,26 @@ import Alert from "@material-ui/lab/Alert";
 
 export default class Login extends Component {
   state = {
-    username: "",
+    email: "",
     password: "",
     showAlert: false,
+    alertMessage: "",
   };
 
   fields = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  ValidateUsername = () => {
-    const un = /^[a-z0-9_-]{6,16}$/gim;
-    return un.test(this.state.username);
+  ValidateEmail = () => {
+    const e = /\S+@\S+\.\S+/;
+    return e.test(this.state.email);
   };
 
   login = () => {
     if (
-      this.state.username !== null &&
-      this.state.username !== undefined &&
-      this.state.username !== ""
+      this.state.email !== null &&
+      this.state.email !== undefined &&
+      this.state.email !== ""
     ) {
       if (
         this.state.password !== null &&
@@ -37,7 +38,7 @@ export default class Login extends Component {
             method: "post",
             url: "http://127.0.0.1:3000/userLogin",
             data: {
-              username: this.state.username,
+              email: this.state.email,
               password: this.state.password,
             },
           })
@@ -46,6 +47,7 @@ export default class Login extends Component {
                 localStorage.setItem("token", res.data.token);
                 localStorage.setItem("userInfo", JSON.stringify(res.data.user));
                 window.location.href = "/dashboard";
+                localStorage.removeItem("homeId");
               }
             })
             .catch((err) => {
@@ -69,7 +71,7 @@ export default class Login extends Component {
       }
     } else {
       this.setState({
-        alertMessage: "Please enter a valid username.",
+        alertMessage: "Please enter a valid email.",
         showAlert: true,
       });
     }
@@ -82,12 +84,12 @@ export default class Login extends Component {
           <div className="formdivlogin">
             <Form className="formlogin">
               <FormGroup>
-                <Label for="exampleUsername">Username</Label>
+                <Label for="exampleEmail">Email</Label>
                 <Input
-                  type="username"
-                  name="username"
-                  id="exampleUsername"
-                  placeholder="with a placeholder"
+                  type="email"
+                  name="email"
+                  id="exampleEmail"
+                  placeholder="Enter your email"
                   onChange={this.fields}
                 />
               </FormGroup>

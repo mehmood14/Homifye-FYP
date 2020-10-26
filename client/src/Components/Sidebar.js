@@ -2,9 +2,6 @@ import React, { Component } from "react";
 import "./sidebar.css";
 import LineStyleIcon from "@material-ui/icons/LineStyle";
 import AccountBoxIcon from "@material-ui/icons/AccountBox";
-// import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
-// import AssessmentIcon from "@material-ui/icons/Assessment";
-// import SettingsIcon from "@material-ui/icons/Settings";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { Link } from "react-router-dom";
@@ -22,7 +19,7 @@ export default class Sidebar extends Component {
   };
 
   Logout = (e) => {
-    JSON.parse(localStorage.removeItem("token"));
+    localStorage.clear();
     this.setState({ logout: e });
   };
 

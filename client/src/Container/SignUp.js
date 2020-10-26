@@ -3,6 +3,7 @@ import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import axios from "axios";
 import "./SignUp.css";
 import { Link } from "react-router-dom";
+import Alert from "@material-ui/lab/Alert";
 
 export default class SignUp extends Component {
   state = {
@@ -11,6 +12,8 @@ export default class SignUp extends Component {
     username: "",
     password: "",
     phone: "",
+    showAlert: false,
+    alertMessage: "",
   };
 
   fields = (e) => {
@@ -35,17 +38,17 @@ export default class SignUp extends Component {
       this.state.name !== ""
     ) {
       if (
-        this.state.username !== null &&
-        this.state.username !== undefined &&
-        this.state.username !== ""
+        this.state.email !== null &&
+        this.state.email !== undefined &&
+        this.state.email !== ""
       ) {
-        if (this.ValidateUsername(this.state.username)) {
+        if (this.validateEmail(this.state.email)) {
           if (
-            this.state.email !== null &&
-            this.state.email !== undefined &&
-            this.state.email !== ""
+            this.state.username !== null &&
+            this.state.username !== undefined &&
+            this.state.username !== ""
           ) {
-            if (this.validateEmail(this.state.email)) {
+            if (this.ValidateUsername(this.state.username)) {
               if (
                 this.state.password !== null &&
                 this.state.password !== undefined &&
@@ -57,51 +60,82 @@ export default class SignUp extends Component {
                     this.state.phone !== undefined &&
                     this.state.phone !== ""
                   ) {
-                    axios({
-                      method: "post",
-                      url: "http://127.0.0.1:3000/registerUser",
-                      data: {
-                        name: this.state.name,
-                        email: this.state.email,
-                        username: this.state.username,
-                        password: this.state.password,
-                        phone: this.state.phone,
-                        homeId: localStorage.getItem("homeId"),
-                      },
-                    })
-                      .then((res) => {
-                        console.log(res);
-                        if (res.status === 200) {
-                          window.location.href = "/mailcheck";
-                          localStorage.removeItem("homeId");
-                        }
+                    if (this.state.phone.length === 11) {
+                      const { history } = this.props;
+
+                      axios({
+                        method: "post",
+                        url: "http://127.0.0.1:3000/registerUser",
+                        data: {
+                          name: this.state.name,
+                          email: this.state.email,
+                          username: this.state.username,
+                          password: this.state.password,
+                          phone: this.state.phone,
+                          homeId: localStorage.getItem("homeId"),
+                        },
                       })
-                      .catch((err) => {
-                        console.log("err::", err);
+                        .then((res) => {
+                          console.log(res);
+                          history.push("/mailcheck");
+                          //localStorage.removeItem("homeId");
+                        })
+                        .catch((err) => {
+                          console.log(err);
+                        });
+                    } else {
+                      this.setState({
+                        alertMessage: "Phone no must be 11 digits",
+                        showAlert: true,
                       });
+                    }
                   } else {
-                    console.log("Phone No required");
+                    this.setState({
+                      alertMessage: "Invalid phone no",
+                      showAlert: true,
+                    });
                   }
                 } else {
-                  alert("Password must be 8 words");
+                  this.setState({
+                    alertMessage: "Passwor must be 8 charecters long",
+                    showAlert: true,
+                  });
                 }
               } else {
-                console.log("Password required");
+                this.setState({
+                  alertMessage: "Invalid password",
+                  showAlert: true,
+                });
               }
             } else {
-              alert("email format not correct");
+              this.setState({
+                alertMessage: "Invalid username format",
+                showAlert: true,
+              });
             }
           } else {
-            console.log("email required");
+            this.setState({
+              alertMessage: "Invalid username",
+              showAlert: true,
+            });
           }
         } else {
-          alert("In correct username format");
+          this.setState({
+            alertMessage: "Invalid email format",
+            showAlert: true,
+          });
         }
       } else {
-        console.log("username required");
+        this.setState({
+          alertMessage: "Invalid email",
+          showAlert: true,
+        });
       }
     } else {
-      console.log("name required");
+      this.setState({
+        alertMessage: "Invalid name",
+        showAlert: true,
+      });
     }
   };
 
@@ -141,7 +175,6 @@ export default class SignUp extends Component {
                   onChange={this.fields}
                 />
               </FormGroup>
-
               <FormGroup>
                 <Label for="examplePassword">Password</Label>
                 <Input
@@ -152,7 +185,6 @@ export default class SignUp extends Component {
                   onChange={this.fields}
                 />
               </FormGroup>
-
               <FormGroup>
                 <Label for="examplePhone">Phone no</Label>
                 <Input
@@ -163,6 +195,24 @@ export default class SignUp extends Component {
                   onChange={this.fields}
                 />
               </FormGroup>
+              {this.state.showAlert === true ? (
+                <Alert
+                  severity="error"
+                  style={{
+                    color: "white",
+                    fontSize: "11px",
+                    height: "26px",
+                    display: "flex",
+                    alignItems: "center",
+                    backgroundColor: "transparent",
+                    padding: "0",
+                    marginTop: "-8px",
+                    marginBottom: "10px",
+                  }}
+                >
+                  {this.state.alertMessage}
+                </Alert>
+              ) : null}
               <Button onClick={this.signup} className="btnsignup">
                 Submit
               </Button>

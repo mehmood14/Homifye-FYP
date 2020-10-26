@@ -1,78 +1,112 @@
-import React from "react";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
+import React, { useEffect, useState } from "react";
+import ReactTable from "react-table-6";
+import "react-table-6/react-table.css";
 import "./Approvals.css";
+import { Button } from "reactstrap";
+import axios from "axios";
 
-const StyledTableCell = withStyles((theme) => ({
-  head: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
-    fontSize: 18,
-  },
-  body: {
-    fontSize: 18,
-  },
-}))(TableCell);
+export default function Approvals() {
+  const [userData, setUserData] = useState([]);
 
-const StyledTableRow = withStyles((theme) => ({
-  root: {
-    "&:nth-of-type(odd)": {
-      backgroundColor: theme.palette.action.hover,
+  useEffect(() => {
+    const homeId = JSON.parse(localStorage.getItem("userInfo"));
+
+    axios({
+      method: "get",
+      url: "http://127.0.0.1:3000/api/pendingUsers/" + homeId.userHomeId,
+      headers: {
+        authorization: localStorage.getItem("token"),
+      },
+    })
+      .then((res) => {
+        setUserData(res.data);
+      })
+      .catch((err) => {
+        console.log("err::", err);
+      });
+  }, []);
+
+  const approve = (e) => {
+    axios({
+      method: "get",
+      url: "http://127.0.0.1:3000/api/approveUsers/" + e.row.email,
+      headers: {
+        authorization: localStorage.getItem("token"),
+      },
+    })
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log("err::", err);
+      });
+  };
+
+  const decline = (e) => {
+    axios({
+      method: "get",
+      url:
+        "http://127.0.0.1:3000/api/declineUsers/" +
+        e.row._original.userHomeId +
+        "/" +
+        e.row._original._id,
+      headers: {
+        authorization: localStorage.getItem("token"),
+      },
+    })
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log("err::", err);
+      });
+  };
+
+  const columns = [
+    {
+      Header: "Name",
+      accessor: "name", // String-based value accessors!
     },
-  },
-}))(TableRow);
-
-function createData(name, approve, decline) {
-  return { name, approve, decline };
-}
-
-const rows = [
-  createData("Frozen yoghurt", 500, 6.0),
-  createData("Ice cream sandwich", 237, 9.0),
-  createData("Eclair", 262, 16.0),
-  createData("Cupcake", 305, 3.7),
-  createData("Gingerbread", 356, 16.0),
-];
-
-const useStyles = makeStyles({
-  table: {
-    minWidth: 700,
-  },
-});
-
-export default function CustomizedTables() {
-  const classes = useStyles();
+    {
+      Header: "Email",
+      accessor: "email",
+    },
+    {
+      Header: "Role",
+      accessor: "role",
+    },
+    {
+      Header: "Action",
+      Cell: (props) => (
+        <span className="number">
+          {props.row._original.adminApproved === true ? (
+            <div>
+              <p>Approved</p>
+            </div>
+          ) : (
+            <div>
+              <Button className="action" onClick={() => approve(props)}>
+                Approve
+              </Button>
+              <Button className="action" onClick={() => decline(props)}>
+                Decline
+              </Button>
+            </div>
+          )}
+        </span>
+      ),
+    },
+  ];
 
   return (
     <div className="approvals-wrapper">
-      <TableContainer component={Paper} style={{ width: "52%", height: "50%" }}>
-        <Table className={classes.table} aria-label="customized table">
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>Names</StyledTableCell>
-              <StyledTableCell align="right">Approve</StyledTableCell>
-              <StyledTableCell align="right">Decline</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <StyledTableRow key={row.name}>
-                <StyledTableCell component="th" scope="row">
-                  {row.name}
-                </StyledTableCell>
-                <StyledTableCell align="right">{row.approve}</StyledTableCell>
-                <StyledTableCell align="right">{row.decline}</StyledTableCell>
-              </StyledTableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <ReactTable
+        className="-striped"
+        filterable
+        minRows={8}
+        data={userData}
+        columns={columns}
+      />
     </div>
   );
 }

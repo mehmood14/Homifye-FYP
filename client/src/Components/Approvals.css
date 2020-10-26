@@ -3,7 +3,18 @@
   padding: 34px 34px;
   border: 2px solid red;
   margin-left: 73px;
-  height: 100vh;
   display: flex;
   justify-content: center;
+}
+.action {
+  color: white !important;
+  background-color: rgb(0, 0, 0, 0.3) !important;
+}
+
+.action:hover {
+  color: rgb(155, 155, 155) !important;
+}
+
+.ReactTable {
+  width: 60%;
 }

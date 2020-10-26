@@ -40,13 +40,16 @@ export default class HomeLogin extends Component {
         })
         .catch((err) => {
           console.log(err);
+          this.setState({
+            alertMessage: "Home not found",
+            showAlert: true,
+          });
         });
     } else {
       this.setState({
         alertMessage: "Please enter a valid name.",
         showAlert: true,
       });
-      console.log("error");
     }
   };
 

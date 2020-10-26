@@ -1,25 +1,16 @@
 import React, { Component } from "react";
-import {
-  Button,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  FormFeedback,
-} from "reactstrap";
+import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import axios from "axios";
 import url from "url";
-import "./ForgotVerify.css";
+import "./ForgotChangePass.css";
 
-export default class ForgotVerify extends Component {
+export default class ForgotChangePass extends Component {
   state = {
     newpassword: "",
-    invalidNewPassword: false,
   };
 
   fields = (e) => {
     this.setState({ newpassword: e.target.value });
-    this.setState({ invalidNewPassword: false });
   };
 
   forgetVerify = () => {
@@ -28,37 +19,31 @@ export default class ForgotVerify extends Component {
       this.state.newpassword !== undefined &&
       this.state.newpassword !== ""
     ) {
-    } else {
-      this.setState({ invalidNewPassword: true });
-    }
+      if (this.state.newpassword.length >= 8) {
+        const urlObj = url.parse(document.location.href, true);
+        const { history } = this.props;
 
-    if (this.state.newpassword.length >= 8) {
-    } else {
-      alert("Password must be 8 words");
-    }
-
-    if (!this.state.invalidPassword) {
-      const urlObj = url.parse(document.location.href, true);
-
-      axios({
-        method: "post",
-        url:
-          "http://127.0.0.1:3000/users/changePass/" +
-          urlObj.query.id +
-          "/" +
-          urlObj.query.code,
-        data: {
-          newpassword: this.state.newpassword,
-        },
-      })
-        .then((res) => {
-          console.log(res);
+        axios({
+          method: "post",
+          url: "http://127.0.0.1:3000/forgotChangePass/" + urlObj.query.id,
+          data: {
+            newpassword: this.state.newpassword,
+          },
         })
-        .catch((err) => {
-          console.log("err::", err);
-        });
+          .then((res) => {
+            console.log(res);
+            if (res.status === 200) {
+              history.push("/passchanged");
+            }
+          })
+          .catch((err) => {
+            console.log("err::", err);
+          });
+      } else {
+        console.log("pass 8 must");
+      }
     } else {
-      console.log("ok");
+      console.log("invalid pass");
     }
   };
   render() {
@@ -75,11 +60,7 @@ export default class ForgotVerify extends Component {
                   id="exampleNewPassword"
                   placeholder="password placeholder"
                   onChange={this.fields}
-                  invalid={this.state.invalidNewPassword}
                 />
-                <FormFeedback invalid={this.state.invalidNewPassword}>
-                  Password is missing
-                </FormFeedback>
               </FormGroup>
               <Button onClick={this.forgetVerify} className="btnforgotnew">
                 Submit

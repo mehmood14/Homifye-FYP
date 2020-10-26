@@ -129,7 +129,7 @@ export default function MiniDrawer() {
         }}
       >
         <div className={classes.toolbar}>
-          <Typography variant="h6" noWrap>
+          <Typography variant="subtitle2" noWrap>
             Home Manager
           </Typography>
 

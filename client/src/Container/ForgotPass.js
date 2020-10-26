@@ -1,60 +1,65 @@
 import React, { Component } from "react";
-import {
-  Button,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  FormFeedback,
-} from "reactstrap";
+import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import axios from "axios";
 import "./ForgotPass.css";
+import Alert from "@material-ui/lab/Alert";
 
 export default class ForgotPass extends Component {
   state = {
-    username: "",
-    invalidUsername: false,
+    email: "",
+    showAlert: false,
+    alertMessage: "",
   };
 
   fields = (e) => {
-    this.setState({ username: e.target.value });
-    this.setState({ invalidUsername: false });
+    this.setState({ email: e.target.value });
   };
 
-  ValidateUsername = () => {
-    const un = /^[a-z0-9_-]{6,16}$/gim;
-    return un.test(this.state.username);
+  ValidateEmail = () => {
+    const e = /\S+@\S+\.\S+/;
+    return e.test(this.state.email);
   };
 
   forgot = () => {
     if (
-      this.state.username !== null &&
-      this.state.username !== undefined &&
-      this.state.username !== ""
+      this.state.email !== null &&
+      this.state.email !== undefined &&
+      this.state.email !== ""
     ) {
-    } else {
-      this.setState({ invalidUsername: true });
-    }
-    if (this.ValidateUsername(this.state.username)) {
-    } else {
-      alert("In correct username format");
-    }
-    if (!this.state.invalidUsername) {
-      axios({
-        method: "post",
-        url: "http://127.0.0.1:3000/users/forgot",
-        data: {
-          username: this.state.username,
-        },
-      })
-        .then((res) => {
-          console.log(res);
+      if (this.ValidateEmail(this.state.email)) {
+        const { history } = this.props;
+
+        axios({
+          method: "post",
+          url: "http://127.0.0.1:3000/forgotPass",
+          data: {
+            email: this.state.email,
+          },
         })
-        .catch((err) => {
-          console.log("err::", err);
+          .then((res) => {
+            console.log(res);
+            if (res.status === 200) {
+              history.push("/forgotmail");
+            }
+          })
+          .catch((err) => {
+            console.log("err::", err);
+            this.setState({
+              alertMessage: "Incorrect email",
+              showAlert: true,
+            });
+          });
+      } else {
+        this.setState({
+          alertMessage: "Invalid email format",
+          showAlert: true,
         });
+      }
     } else {
-      console.log("ok");
+      this.setState({
+        alertMessage: "Invalid email",
+        showAlert: true,
+      });
     }
   };
 
@@ -65,19 +70,33 @@ export default class ForgotPass extends Component {
           <div className="formdivforgot">
             <Form className="formforgot">
               <FormGroup>
-                <Label for="exampleUsername">Username</Label>
+                <Label for="exampleEmail">Email</Label>
                 <Input
-                  type="username"
-                  name="username"
-                  id="exampleUsername"
-                  placeholder="Enter Usernamer"
+                  type="email"
+                  name="email"
+                  id="exampleEmai;"
+                  placeholder="Enter your email"
                   onChange={this.fields}
-                  invalid={this.state.invalidUsername}
                 />
-                <FormFeedback invalid={this.state.invalidUsername}>
-                  Username is missing
-                </FormFeedback>
               </FormGroup>
+              {this.state.showAlert === true ? (
+                <Alert
+                  severity="error"
+                  style={{
+                    color: "white",
+                    fontSize: "11px",
+                    height: "26px",
+                    display: "flex",
+                    alignItems: "center",
+                    backgroundColor: "transparent",
+                    padding: "0",
+                    marginTop: "-8px",
+                    marginBottom: "10px",
+                  }}
+                >
+                  {this.state.alertMessage}
+                </Alert>
+              ) : null}
               <Button onClick={this.forgot} className="forgot">
                 ok
               </Button>
